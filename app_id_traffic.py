@@ -1,4 +1,3 @@
-import os
 import requests
 import random
 import urllib3
@@ -8,11 +7,8 @@ import time
 # Disable SSL warnings since we're ignoring SSL verification
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Get the directory of the current script
-script_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Path to the CA certificate in the same directory as the script
-ca_cert = os.path.join(script_dir, 'ridpharm_ca.crt')
+# Path to the CA certificate on Windows (if needed)
+ca_cert = r'C:\Users\deisenhower\Desktop\python_scripts\ridpharm_ca.cer'
 
 # List of unique URLs
 urls = [
@@ -269,8 +265,8 @@ def simulate_real_traffic():
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"
                 }
 
-                # Perform GET request with SSL verification using the custom certificate
-                response = session.get(url, headers=headers, verify=ca_cert, timeout=(2, 5))
+                # Perform GET request with SSL verification disabled
+                response = session.get(url, headers=headers, verify=False, timeout=(2, 5))
 
                 # Print the URL, Status Code, and Content Length in one line
                 print(f"{url}, Status Code: {response.status_code}, Content Length: {len(response.content)} bytes")
