@@ -1,8 +1,12 @@
+import os
 import requests
 import time
 
-# Path to the CA certificate on Windows
-ca_cert = r'C:\Users\deisenhower\Desktop\python_scripts\ridpharm_ca.cer'  # Using a raw string
+# Get the directory of the current script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Path to the CA certificate in the same directory as the script
+ca_cert = os.path.join(script_dir, 'ridpharm_ca.crt')
 
 # Lists of DNS security testing URLs
 c2_urls = ["https://test-c2.testpanw.com"]
@@ -36,9 +40,15 @@ def test_urls(category, urls):
     print(f"Testing {category}")
     print(f"----------------------------------")
     for url in urls:
+        print(f"URL: {url}")
         try:
             response = requests.get(url, verify=ca_cert, timeout=10)  # Use the CA certificate for verification
-            print(f"URL: {url}, Status Code: {response.status_code}")
+            if response.status_code == 200:
+                print(f"URL: {url}, Status Code: {response.status_code}")
+            else:
+                print(f"{category} Category Successfully Blocked!")
+        except requests.exceptions.ConnectionError:
+            print(f"{category} Category Successfully Blocked!")
         except requests.exceptions.RequestException as e:
             print(f"URL: {url}, Error: {e}")
         time.sleep(1)
